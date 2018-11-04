@@ -23,17 +23,11 @@
     dest: /etc/containerd/config.toml
   notify: restart containerd
 
-- name: Containerd | Enable Containerd unit
-  systemd:
-    name: containerd.service
-    daemon_reload: yes
-    state: started
-    enabled: yes
-
 - name: Containerd | List containerd binaries
   find:
     paths: "{{ containerd_release_dir }}/bin"
   register: containerd_binaries
+  notify: restart containerd
 
 - name: Containerd | Symlink containerd binaries
   file:
@@ -41,3 +35,12 @@
     dest: "{{ bin_dir }}/{{ item.path | basename }}"
     state: link
   with_items: "{{ containerd_binaries.files }}"
+  notify: restart containerd
+
+- meta: flush_handlers
+
+- name: Containerd | Enable Containerd unit
+  systemd:
+    name: containerd.service
+    state: started
+    enabled: yes

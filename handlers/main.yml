@@ -4,5 +4,4 @@
     state: restarted
     name: containerd.service
     daemon_reload: yes
-    enabled: yes
   listen: "restart containerd"
