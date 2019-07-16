@@ -6,3 +6,6 @@ containerd_release_url: https://github.com/containerd/containerd/releases/downlo
 containerd_release_dir: /opt/containerd
 containerd_socket: /run/containerd/containerd.sock
 containerd_config_dir: /etc/containerd
+
+runc_version: 1.0.0-rc8
+runc_release_url: https://github.com/opencontainers/runc/releases/download/v{{ runc_version }}/runc.amd64
