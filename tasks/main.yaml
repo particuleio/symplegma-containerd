@@ -6,6 +6,7 @@
   with_items:
   - "{{ containerd_release_dir }}"
   - "{{ containerd_config_dir }}"
+  - "{{ bin_dir }}"
 
 - name: Containerd | Download binaries
   unarchive:
