@@ -13,12 +13,14 @@
     mode: 0755
     dest: "{{ bin_dir }}/runc"
     force: yes
+  notify: restart containerd
 
 - name: Containerd | Download binaries
   unarchive:
     src: "{{ containerd_release_url }}"
     dest: "{{ containerd_release_dir }}"
     remote_src: yes
+  notify: restart containerd
 
 - name: Containerd | Drop systemd unit
   template:
