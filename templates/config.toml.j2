@@ -1,3 +1,4 @@
 [plugins]
-    [plugins.linux]
-        shim = "{{ bin_dir }}/containerd-shim"
+  [plugins."io.containerd.runtime.v1.linux"]
+    shim = "{{ bin_dir }}/containerd-shim"
+    runtime = "{{ bin_dir }}/runc"
