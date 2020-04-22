@@ -2,3 +2,5 @@
   [plugins."io.containerd.runtime.v1.linux"]
     shim = "{{ bin_dir }}/containerd-shim"
     runtime = "{{ bin_dir }}/runc"
+  [plugins."io.containerd.grpc.v1.cri"]
+    systemd_cgroup = true
