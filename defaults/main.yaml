@@ -2,7 +2,7 @@
 bin_dir: /opt/bin
 
 containerd_version: 1.3.6
-containerd_release_url: https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}.linux-amd64.tar.gz
+containerd_release_url: https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-amd64.tar.gz
 containerd_release_dir: /opt/containerd
 containerd_socket: /run/containerd/containerd.sock
 containerd_config_dir: /etc/containerd
