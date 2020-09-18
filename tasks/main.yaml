@@ -28,12 +28,6 @@
     dest: /etc/systemd/system/containerd.service
   notify: restart containerd
 
-- name: Containerd | Drop containerd config
-  template:
-    src: config.toml.j2
-    dest: /etc/containerd/config.toml
-  notify: restart containerd
-
 - name: Containerd | List containerd binaries
   find:
     paths: "{{ containerd_release_dir }}/bin"
