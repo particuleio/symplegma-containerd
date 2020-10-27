@@ -1,5 +1,15 @@
 {% if containerd_config %}
 {{ containerd_config }}
+{% elif systemd_cgroup %}
+version = 2
+[plugins]
+  [plugins."io.containerd.grpc.v1.cri"]
+    [plugins."io.containerd.grpc.v1.cri".containerd]
+      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+          runtime_type = "io.containerd.runc.v2"
+          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+            SystemdCgroup = true
 {% else %}
 version = 2
 root = "/var/lib/containerd"
