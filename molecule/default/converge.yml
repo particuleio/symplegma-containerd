@@ -9,6 +9,14 @@
         cache_valid_time: 600
       when: "ansible_os_family == 'Debian'"
 
+    - name: "Pre-task | Create required directories"
+      file:
+        mode: "u+rw,g+r,o+r"
+        path: "{{ item }}"
+        state: "directory"
+      loop:
+        - "/opt/bin"
+
   tasks:
     - name: "Include symplegma-containerd"
       include_role:
