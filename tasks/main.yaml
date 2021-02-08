@@ -4,22 +4,22 @@
     path: "{{ item }}"
     state: directory
   with_items:
-  - "{{ containerd_release_dir }}"
-  - "{{ containerd_config_dir }}"
+    - "{{ containerd_release_dir }}"
+    - "{{ containerd_config_dir }}"
 
 - name: Containerd | Download runc
   get_url:
     url: "{{ runc_release_url }}"
     mode: 0755
     dest: "{{ bin_dir }}/runc"
-    force: yes
+    force: true
   notify: restart containerd
 
 - name: Containerd | Download binaries
   unarchive:
     src: "{{ containerd_release_url }}"
     dest: "{{ containerd_release_dir }}"
-    remote_src: yes
+    remote_src: true
   notify: restart containerd
 
 - name: Containerd | Drop systemd unit
@@ -54,4 +54,4 @@
   systemd:
     name: containerd.service
     state: started
-    enabled: yes
+    enabled: true
