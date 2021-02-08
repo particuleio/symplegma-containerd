@@ -29,3 +29,21 @@ jobs:
         run: |
           yamllint .
           ansible-lint
+
+  molecule:
+    name: "symplegma-containerd:molecule"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Molecule.
+        run: pip3 install molecule[docker] ansible
+
+      - name: Molecule converge.
+        run: molecule converge

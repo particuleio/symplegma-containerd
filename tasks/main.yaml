@@ -3,6 +3,7 @@
   file:
     path: "{{ item }}"
     state: directory
+    mode: "u+rw,g+r,o+r"
   with_items:
     - "{{ containerd_release_dir }}"
     - "{{ containerd_config_dir }}"
@@ -26,12 +27,14 @@
   template:
     src: containerd.service.j2
     dest: /etc/systemd/system/containerd.service
+    mode: 'u+rw,g+r,o+r'
   notify: restart containerd
 
 - name: Containerd | Drop containerd config
   template:
     src: config.toml.j2
     dest: /etc/containerd/config.toml
+    mode: 'u+rw,g+r,o+r'
   notify: restart containerd
 
 - name: Containerd | List containerd binaries
