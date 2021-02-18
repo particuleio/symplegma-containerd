@@ -23,7 +23,8 @@ jobs:
           python-version: '3.x'
 
       - name: Install test dependencies.
-        run: pip3 install ansible yamllint ansible-lint
+        run: |
+          pip3 install ansible~=${{ secrets.ANSIBLE_VERSION }} yamllint ansible-lint
 
       - name: Lint code.
         run: |
@@ -43,7 +44,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install Molecule.
-        run: pip3 install molecule[docker] ansible
+        run: pip3 install molecule[docker] ansible~=${{ secrets.ANSIBLE_VERSION }}
 
       - name: Molecule converge.
         run: molecule converge
