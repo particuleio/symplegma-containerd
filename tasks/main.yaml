@@ -3,35 +3,38 @@
   file:
     path: "{{ item }}"
     state: directory
+    mode: "u+rw,g+r,o+r"
   with_items:
-  - "{{ containerd_release_dir }}"
-  - "{{ containerd_config_dir }}"
+    - "{{ containerd_release_dir }}"
+    - "{{ containerd_config_dir }}"
 
 - name: Containerd | Download runc
   get_url:
     url: "{{ runc_release_url }}"
     mode: 0755
     dest: "{{ bin_dir }}/runc"
-    force: yes
+    force: true
   notify: restart containerd
 
 - name: Containerd | Download binaries
   unarchive:
     src: "{{ containerd_release_url }}"
     dest: "{{ containerd_release_dir }}"
-    remote_src: yes
+    remote_src: true
   notify: restart containerd
 
 - name: Containerd | Drop systemd unit
   template:
     src: containerd.service.j2
     dest: /etc/systemd/system/containerd.service
+    mode: 'u+rw,g+r,o+r'
   notify: restart containerd
 
 - name: Containerd | Drop containerd config
   template:
     src: config.toml.j2
     dest: /etc/containerd/config.toml
+    mode: 'u+rw,g+r,o+r'
   notify: restart containerd
 
 - name: Containerd | List containerd binaries
@@ -54,4 +57,4 @@
   systemd:
     name: containerd.service
     state: started
-    enabled: yes
+    enabled: true

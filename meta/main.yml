@@ -4,9 +4,9 @@ galaxy_info:
   description: Ansible role to bootstrap Containerd
   company: clusterfraks-dynamics
   platforms:
-  - name: GenericLinux
-    version:
-    - any
+    - name: GenericLinux
+      version:
+        - any
 
   license: Apache
 
