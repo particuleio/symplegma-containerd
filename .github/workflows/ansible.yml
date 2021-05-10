@@ -2,6 +2,8 @@
 name: 'symplegma-containerd'
 
 'on':
+  schedule:
+    - cron: '0 7 * * 1'  # every monday at 7am
   push:
     branches:
       - main
@@ -24,7 +26,7 @@ jobs:
 
       - name: Install test dependencies.
         run: |
-          pip3 install ansible~=${{ secrets.ANSIBLE_VERSION }} yamllint ansible-lint
+          pip3 install ansible yamllint ansible-lint
 
       - name: Lint code.
         run: |
@@ -44,7 +46,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install Molecule.
-        run: pip3 install molecule[docker] ansible~=${{ secrets.ANSIBLE_VERSION }}
+        run: pip3 install molecule[docker] ansible
 
       - name: Molecule converge.
         run: molecule converge

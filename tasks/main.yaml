@@ -51,7 +51,8 @@
   with_items: "{{ containerd_binaries.files }}"
   notify: restart containerd
 
-- meta: flush_handlers
+- name: Containerd | Trigger "restart containerd" handler
+  meta: flush_handlers
 
 - name: Containerd | Enable Containerd unit
   systemd:
