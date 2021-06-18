@@ -1,13 +1,13 @@
 ---
 bin_dir: /opt/bin
 
-containerd_version: 1.4.3
+containerd_version: 1.5.2
 containerd_release_url: https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-amd64.tar.gz
 containerd_release_dir: /opt/containerd
 containerd_socket: /run/containerd/containerd.sock
 containerd_config_dir: /etc/containerd
 
-runc_version: 1.0.0-rc92
+runc_version: 1.0.0-rc95
 runc_release_url: https://github.com/opencontainers/runc/releases/download/v{{ runc_version }}/runc.amd64
 
 containerd_config: {}
