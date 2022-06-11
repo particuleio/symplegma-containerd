@@ -2,7 +2,9 @@
 galaxy_info:
   author: ArchiFleKs
   description: Ansible role to bootstrap Containerd
-  company: clusterfraks-dynamics
+  company: particule
+  role_name: symplegma_cni
+  namespace: particule
   platforms:
     - name: GenericLinux
       version:
