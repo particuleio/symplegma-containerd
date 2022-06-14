@@ -4,13 +4,13 @@
   become: true
   pre_tasks:
     - name: "Pre-task | Update apt-cache"
-      apt:
+      ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 600
       when: "ansible_os_family == 'Debian'"
 
     - name: "Pre-task | Create required directories"
-      file:
+      ansible.builtin.file:
         mode: "u+rw,g+r,o+r"
         path: "{{ item }}"
         state: "directory"
@@ -19,5 +19,5 @@
 
   tasks:
     - name: "Include symplegma-containerd"
-      include_role:
+      ansible.builtin.include_role:
         name: "symplegma-containerd"

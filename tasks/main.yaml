@@ -1,6 +1,6 @@
 ---
 - name: Containerd | Ensure containerd required directory exist
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: "u+rw,g+r,o+r"
@@ -9,7 +9,7 @@
     - "{{ containerd_config_dir }}"
 
 - name: Containerd | Download runc
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ runc_release_url }}"
     mode: 0755
     dest: "{{ bin_dir }}/runc"
@@ -17,34 +17,34 @@
   notify: restart containerd
 
 - name: Containerd | Download binaries
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ containerd_release_url }}"
     dest: "{{ containerd_release_dir }}"
     remote_src: true
   notify: restart containerd
 
 - name: Containerd | Drop systemd unit
-  template:
+  ansible.builtin.template:
     src: containerd.service.j2
     dest: /etc/systemd/system/containerd.service
     mode: 'u+rw,g+r,o+r'
   notify: restart containerd
 
 - name: Containerd | Drop containerd config
-  template:
+  ansible.builtin.template:
     src: config.toml.j2
     dest: /etc/containerd/config.toml
     mode: 'u+rw,g+r,o+r'
   notify: restart containerd
 
 - name: Containerd | List containerd binaries
-  find:
+  ansible.builtin.find:
     paths: "{{ containerd_release_dir }}/bin"
   register: containerd_binaries
   notify: restart containerd
 
 - name: Containerd | Symlink containerd binaries
-  file:
+  ansible.builtin.file:
     src: "{{ item.path }}"
     dest: "{{ bin_dir }}/{{ item.path | basename }}"
     state: link
@@ -52,10 +52,10 @@
   notify: restart containerd
 
 - name: Containerd | Trigger "restart containerd" handler
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers
 
 - name: Containerd | Enable Containerd unit
-  systemd:
+  ansible.builtin.systemd:
     name: containerd.service
     state: started
     enabled: true
