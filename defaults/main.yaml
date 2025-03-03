@@ -16,6 +16,6 @@ runc_release_url: https://github.com/opencontainers/runc/releases/download/v{{ r
 containerd_config: |-
   version = 3
   [plugins.'io.containerd.cri.v1.runtime'.containerd.runtimes.runc.options]
-    SystemdCgroup = {{ systemd_cgroup }}
+    SystemdCgroup = {{ systemd_cgroup | string | lower }}
 
 systemd_cgroup: true
