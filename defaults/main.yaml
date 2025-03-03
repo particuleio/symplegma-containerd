@@ -1,18 +1,21 @@
 ---
 bin_dir: /opt/bin
 
-containerd_version: 2.0.2
+containerd_version: 2.0.3
 # yamllint disable-line rule:line-length
 containerd_release_url: https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-amd64.tar.gz
 containerd_release_dir: /opt/containerd
 containerd_socket: /run/containerd/containerd.sock
 containerd_config_dir: /etc/containerd
 
-runc_version: 1.2.4
+runc_version: 1.2.5
 
 # yamllint disable-line rule:line-length
 runc_release_url: https://github.com/opencontainers/runc/releases/download/v{{ runc_version }}/runc.amd64
 
-containerd_config: {}
+containerd_config: |-
+  version = 3
+  [plugins.'io.containerd.cri.v1.runtime'.containerd.runtimes.runc.options]
+    SystemdCgroup = {{ systemd_cgroup }}
 
-systemd_cgroup: false
+systemd_cgroup: true
