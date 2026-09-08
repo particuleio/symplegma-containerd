@@ -3,21 +3,12 @@
   hosts: all
   become: true
   pre_tasks:
-    - name: "Pre-task | Update apt-cache"
+    - name: Update apt cache
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 600
-      when: "ansible_os_family == 'Debian'"
-
-    - name: "Pre-task | Create required directories"
-      ansible.builtin.file:
-        mode: "u+rw,g+r,o+r"
-        path: "{{ item }}"
-        state: "directory"
-      loop:
-        - "/opt/bin"
-
+      when: ansible_facts.os_family == 'Debian'
   tasks:
-    - name: "Include symplegma-containerd"
+    - name: Include the role
       ansible.builtin.include_role:
-        name: "symplegma-containerd"
+        name: "{{ playbook_dir }}/../.."

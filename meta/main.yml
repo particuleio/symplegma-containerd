@@ -3,16 +3,16 @@ galaxy_info:
   author: ArchiFleKs
   description: Ansible role to bootstrap Containerd
   company: particule
-  role_name: symplegma_cni
+  role_name: symplegma_containerd
   namespace: particule
   platforms:
     - name: GenericLinux
-      version:
-        - any
+      versions:
+        - all
 
   license: Apache
 
-  min_ansible_version: "2.6"
+  min_ansible_version: "2.21"
 
   galaxy_tags: []
 

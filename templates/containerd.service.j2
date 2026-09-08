@@ -5,7 +5,8 @@ After=network.target local-fs.target
 
 [Service]
 ExecStartPre=-/sbin/modprobe overlay
-ExecStart=/{{ bin_dir }}/containerd
+Environment="PATH={{ bin_dir }}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ExecStart={{ bin_dir }}/containerd --config {{ containerd_config_dir }}/config.toml
 
 Type=notify
 Delegate=yes

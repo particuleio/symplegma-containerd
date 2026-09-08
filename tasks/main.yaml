@@ -3,22 +3,31 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: "u+rw,g+r,o+r"
+    mode: "0755"
   with_items:
+    - "{{ bin_dir }}"
     - "{{ containerd_release_dir }}"
     - "{{ containerd_config_dir }}"
 
 - name: Containerd | Download runc
   ansible.builtin.get_url:
     url: "{{ runc_release_url }}"
-    mode: 0755
+    checksum: "{{ runc_checksum }}"
+    mode: "0755"
     dest: "{{ bin_dir }}/runc"
     force: true
   notify: restart containerd
 
+- name: Containerd | Download verified archive
+  ansible.builtin.get_url:
+    url: "{{ containerd_release_url }}"
+    checksum: "{{ containerd_checksum }}"
+    dest: "{{ containerd_release_dir }}/containerd-{{ containerd_version }}.tar.gz"
+    mode: "0644"
+
 - name: Containerd | Download binaries
   ansible.builtin.unarchive:
-    src: "{{ containerd_release_url }}"
+    src: "{{ containerd_release_dir }}/containerd-{{ containerd_version }}.tar.gz"
     dest: "{{ containerd_release_dir }}"
     remote_src: true
   notify: restart containerd
@@ -33,7 +42,7 @@
 - name: Containerd | Drop containerd config
   ansible.builtin.template:
     src: config.toml.j2
-    dest: /etc/containerd/config.toml
+    dest: "{{ containerd_config_dir }}/config.toml"
     mode: 'u+rw,g+r,o+r'
   notify: restart containerd
 

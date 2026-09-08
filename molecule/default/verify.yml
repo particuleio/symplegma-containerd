@@ -1,10 +1,38 @@
 ---
-# This is an example playbook to execute Ansible tests.
-
-- name: Verify
+- name: Verify installed artifacts
   hosts: all
   gather_facts: false
+  vars_files:
+    - ../../defaults/main.yaml
   tasks:
-  - name: Example assertion
-    ansible.builtin.assert:
-      that: true
+    - name: Read installed binary versions
+      ansible.builtin.command: "{{ item.command }}"
+      changed_when: false
+      loop:
+        - command: "/opt/bin/containerd --version"
+          version: "{{ containerd_version }}"
+        - command: "/opt/bin/runc --version"
+          version: "{{ runc_version }}"
+      register: installed_versions
+    - name: Assert the pinned versions were installed
+      ansible.builtin.assert:
+        that:
+          - item.item.version in (item.stdout ~ item.stderr)
+      loop: "{{ installed_versions.results }}"
+    - name: Validate the effective containerd configuration
+      ansible.builtin.command: /opt/bin/containerd config dump
+      changed_when: false
+      register: effective_config
+    - name: Assert current CRI and systemd cgroup configuration
+      ansible.builtin.assert:
+        that:
+          - "'version = 4' in effective_config.stdout"
+          - "'Configuration migrated' not in effective_config.stderr"
+          - "'SystemdCgroup = true' in effective_config.stdout"
+          - "'io.containerd.cri.v1.runtime' in effective_config.stdout"
+    - name: Gather service state
+      ansible.builtin.service_facts:
+    - name: Assert containerd is running
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services['containerd.service'].state == 'running'

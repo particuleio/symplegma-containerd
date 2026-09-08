@@ -1,52 +1,67 @@
 ---
-name: 'symplegma-containerd'
+name: symplegma-containerd
 
-'on':
-  schedule:
-    - cron: '0 7 * * 1'  # every monday at 7am
+on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+  workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ANSIBLE_HOME: ${{ github.workspace }}/.ansible
+  ANSIBLE_INJECT_FACT_VARS: 'false'
 
 jobs:
   linter:
-    name: "symplegma-containerd:linter"
-    runs-on: ubuntu-latest
+    name: symplegma-containerd:linter
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
-      - name: Check out the codebase.
-        uses: actions/checkout@v2
-
-      - name: Set up Python 3.
-        uses: actions/setup-python@v2
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          python-version: '3.x'
-
-      - name: Install test dependencies.
-        run: |
-          pip3 install ansible yamllint ansible-lint
-
-      - name: Lint code.
-        run: |
-          yamllint .
-          ansible-lint
+          persist-credentials: false
+      - name: Set up uv and Python
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: '0.12.10'
+          python-version: '3.14.7'
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked dependencies
+        run: uv sync --locked
+      - name: Run all pre-commit checks
+        run: uv run --locked pre-commit run --all-files --show-diff-on-failure
 
   molecule:
-    name: "symplegma-containerd:molecule"
-    runs-on: ubuntu-latest
+    name: symplegma-containerd:molecule
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
-      - name: Check out the codebase.
-        uses: actions/checkout@v2
-
-      - name: Set up Python 3.
-        uses: actions/setup-python@v2
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          python-version: '3.x'
-
-      - name: Install Molecule.
-        run: pip3 install molecule[docker] ansible
-
-      - name: Molecule converge.
-        run: molecule converge
+          persist-credentials: false
+      - name: Set up uv and Python
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: '0.12.10'
+          python-version: '3.14.7'
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked dependencies
+        run: uv sync --locked
+      - name: Test the role in disposable Ubuntu containers
+        run: uv run --locked molecule test
+      - name: Clean up test containers
+        if: always()
+        run: uv run --locked molecule destroy

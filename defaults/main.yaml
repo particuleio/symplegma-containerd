@@ -1,21 +1,35 @@
 ---
 bin_dir: /opt/bin
 
-containerd_version: 2.0.3
+# renovate: datasource=github-releases depName=containerd/containerd
+containerd_version: 2.3.5
 # yamllint disable-line rule:line-length
-containerd_release_url: https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-amd64.tar.gz
+containerd_release_url: https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-{{ containerd_arch }}.tar.gz
 containerd_release_dir: /opt/containerd
 containerd_socket: /run/containerd/containerd.sock
 containerd_config_dir: /etc/containerd
 
-runc_version: 1.2.5
+# renovate: datasource=github-releases depName=opencontainers/runc
+runc_version: 1.5.1
 
 # yamllint disable-line rule:line-length
-runc_release_url: https://github.com/opencontainers/runc/releases/download/v{{ runc_version }}/runc.amd64
+runc_release_url: https://github.com/opencontainers/runc/releases/download/v{{ runc_version }}/runc.{{ containerd_arch }}
+
+containerd_arch: "{{ {'x86_64': 'amd64', 'aarch64': 'arm64'}[ansible_facts['architecture']] }}"
+runc_checksum: "sha256:https://github.com/opencontainers/runc/releases/download/v{{ runc_version }}/runc.sha256sum"
+containerd_checksum: "sha256:{{ containerd_release_url }}.sha256sum"
+containerd_pause_image: registry.k8s.io/pause:3.10.2
 
 containerd_config: |-
-  version = 3
+  version = 4
+  [plugins.'io.containerd.server.v1.grpc']
+    address = "{{ containerd_socket }}"
+  [plugins.'io.containerd.cri.v1.images'.pinned_images]
+    sandbox = "{{ containerd_pause_image }}"
+  [plugins.'io.containerd.cri.v1.runtime'.containerd.runtimes.runc]
+    runtime_type = "io.containerd.runc.v2"
   [plugins.'io.containerd.cri.v1.runtime'.containerd.runtimes.runc.options]
+    BinaryName = "{{ bin_dir }}/runc"
     SystemdCgroup = {{ systemd_cgroup | string | lower }}
 
 systemd_cgroup: true
