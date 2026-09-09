@@ -26,6 +26,12 @@ repos:
         args: [--offline, --strict-collection, --pedantic, --no-progress]
   - repo: local
     hooks:
+      - id: runtime-configuration
+        name: Test OCI runtime configuration
+        entry: uv run --locked python -m unittest discover -s tests -v
+        language: system
+        always_run: true
+        pass_filenames: false
       - id: uv-lock
         name: Check uv lockfile
         entry: uv lock --check

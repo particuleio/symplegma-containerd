@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Install crun 1.29.1 alongside runc with verified amd64/arm64 release-asset checksums.
+- Add `containerd_default_runtime` (`runc` or `crun`) and separate OCI runtime handlers with systemd cgroups.
+- Preserve runc as the default and retain its executable and handler when selecting crun.
+- Add crun artifact verification and document runtime selection and staged migration.
+
 ## v2.3.5-rel.0
 
 ### Changes

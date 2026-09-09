@@ -12,6 +12,18 @@ containerd_config_dir: /etc/containerd
 # renovate: datasource=github-releases depName=opencontainers/runc
 runc_version: 1.5.1
 
+# renovate: datasource=github-releases depName=containers/crun
+crun_version: 1.29.1
+crun_release_url: https://github.com/containers/crun/releases/download/{{ crun_version }}/crun-{{ crun_version }}-linux-{{ containerd_arch }}
+# GitHub release asset digests; update together with crun_version.
+crun_checksums:
+  amd64: sha256:0a5ea25cafe618bbfbf1c747871155063619f18025ccdd8ad648c97633f35d57
+  arm64: sha256:1ea99c6fc7a8e17a4a1d666df09cccb0769a4db0aa738cf38c967a777a731b1d
+crun_checksum: "{{ crun_checksums[containerd_arch] }}"
+
+# Preserve containerd's upstream default; opt in to crun independently of upgrades.
+containerd_default_runtime: runc
+
 # yamllint disable-line rule:line-length
 runc_release_url: https://github.com/opencontainers/runc/releases/download/v{{ runc_version }}/runc.{{ containerd_arch }}
 
@@ -26,10 +38,17 @@ containerd_config: |-
     address = "{{ containerd_socket }}"
   [plugins.'io.containerd.cri.v1.images'.pinned_images]
     sandbox = "{{ containerd_pause_image }}"
+  [plugins.'io.containerd.cri.v1.runtime'.containerd]
+    default_runtime_name = "{{ containerd_default_runtime }}"
   [plugins.'io.containerd.cri.v1.runtime'.containerd.runtimes.runc]
     runtime_type = "io.containerd.runc.v2"
   [plugins.'io.containerd.cri.v1.runtime'.containerd.runtimes.runc.options]
     BinaryName = "{{ bin_dir }}/runc"
+    SystemdCgroup = {{ systemd_cgroup | string | lower }}
+  [plugins.'io.containerd.cri.v1.runtime'.containerd.runtimes.crun]
+    runtime_type = "io.containerd.runc.v2"
+  [plugins.'io.containerd.cri.v1.runtime'.containerd.runtimes.crun.options]
+    BinaryName = "{{ bin_dir }}/crun"
     SystemdCgroup = {{ systemd_cgroup | string | lower }}
 
 systemd_cgroup: true

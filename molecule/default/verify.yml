@@ -13,6 +13,8 @@
           version: "{{ containerd_version }}"
         - command: "/opt/bin/runc --version"
           version: "{{ runc_version }}"
+        - command: "/opt/bin/crun --version"
+          version: "{{ crun_version }}"
       register: installed_versions
     - name: Assert the pinned versions were installed
       ansible.builtin.assert:
@@ -30,6 +32,9 @@
           - "'Configuration migrated' not in effective_config.stderr"
           - "'SystemdCgroup = true' in effective_config.stdout"
           - "'io.containerd.cri.v1.runtime' in effective_config.stdout"
+          - "\"default_runtime_name = 'runc'\" in effective_config.stdout"
+          - "\"BinaryName = '/opt/bin/runc'\" in effective_config.stdout"
+          - "\"BinaryName = '/opt/bin/crun'\" in effective_config.stdout"
     - name: Gather service state
       ansible.builtin.service_facts:
     - name: Assert containerd is running

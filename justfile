@@ -10,6 +10,10 @@ setup:
 lint:
     uv run --locked pre-commit run --all-files --show-diff-on-failure
 
+# Render both OCI runtime configurations without Docker or a live cluster.
+unit:
+    uv run --locked python -m unittest discover -s tests -v
+
 # Disposable privileged Docker containers; do not run on a production host.
 test:
     uv run --locked molecule test

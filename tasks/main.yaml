@@ -1,4 +1,10 @@
 ---
+- name: Containerd | Validate the default OCI runtime
+  ansible.builtin.assert:
+    that:
+      - containerd_default_runtime in ['runc', 'crun']
+    fail_msg: Set containerd_default_runtime to runc or crun.
+
 - name: Containerd | Ensure containerd required directory exist
   ansible.builtin.file:
     path: "{{ item }}"
@@ -16,6 +22,14 @@
     mode: "0755"
     dest: "{{ bin_dir }}/runc"
     force: true
+  notify: restart containerd
+
+- name: Containerd | Download crun
+  ansible.builtin.get_url:
+    url: "{{ crun_release_url }}"
+    checksum: "{{ crun_checksum }}"
+    mode: "0755"
+    dest: "{{ bin_dir }}/crun"
   notify: restart containerd
 
 - name: Containerd | Download verified archive
